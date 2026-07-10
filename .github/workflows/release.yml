@@ -85,8 +85,11 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           generateReleaseNotes: true
-                    body: |
+          body: |
             Minimum Lidarr Version: nightly-compatible (built against hotio/lidarr:nightly runtime assemblies)
+
+
+
 
 
 
