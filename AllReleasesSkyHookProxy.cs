@@ -107,8 +107,8 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
             Metadata = MapArtistMetadata(httpResponse.Resource)
         };
 
-        artist.CleanName = Parser.Parser.CleanArtistName(artist.Metadata.Value.Name);
-        artist.SortName = Parser.Parser.NormalizeTitle(artist.Metadata.Value.Name);
+        artist.CleanName = NzbDrone.Core.Parser.Parser.CleanArtistName(artist.Metadata.Value.Name);
+        artist.SortName = NzbDrone.Core.Parser.Parser.NormalizeTitle(artist.Metadata.Value.Name);
 
         artist.Albums = FilterAlbums(httpResponse.Resource.Albums, metadataProfileId)
             .Select(x => MapAlbum(x, null))
@@ -527,7 +527,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
             Ratings = MapRatings(resource.Rating),
             Links = resource.Links?.Select(MapLink).ToList(),
             Genres = resource.Genres,
-            CleanTitle = Parser.Parser.CleanArtistName(resource.Title)
+            CleanTitle = NzbDrone.Core.Parser.Parser.CleanArtistName(resource.Title)
         };
 
         if (resource.Images != null)
