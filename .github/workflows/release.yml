@@ -19,12 +19,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Checkout Lidarr source (v3.1.3.4970)
+      - name: Checkout Lidarr source (v3.1.3.4968)
         uses: actions/checkout@v5
         with:
           repository: Lidarr/Lidarr
-                    ref: v3.1.3.4968
-
+          ref: v3.1.3.4968
           path: Submodules/Lidarr
 
       - name: Setup .NET 8
@@ -77,11 +76,5 @@ jobs:
           replacesArtifacts: true
           generateReleaseNotes: true
           body: |
-                        Minimum Lidarr Version: 3.1.3.4968
-
-
-
-
-
-
+            Minimum Lidarr Version: 3.1.3.4968
 
