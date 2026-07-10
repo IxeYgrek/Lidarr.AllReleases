@@ -42,9 +42,8 @@ jobs:
       - name: Restore
         run: dotnet restore ./Lidarr.AllReleases.csproj --configfile ./NuGet.config -p:NuGetAudit=false
 
-            - name: Build
+      - name: Build
         run: dotnet build ./Lidarr.AllReleases.csproj -c Release --no-restore -p:Version=${{ steps.version.outputs.version }} -p:RepositoryUrl=https://github.com/${{ github.repository }} -p:NuGetAudit=false -p:RunAnalyzers=false -p:TreatWarningsAsErrors=false -p:WarningsAsErrors=
-
 
       - name: Pack plugin zip (net8.0)
         shell: bash
@@ -68,6 +67,7 @@ jobs:
           generateReleaseNotes: true
           body: |
             Minimum Lidarr Version: 3.1.3.4970
+
 
 
 
