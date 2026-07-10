@@ -11,6 +11,7 @@
     <InformationalVersion>$(Version)</InformationalVersion>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/OWNER/Lidarr.AllReleases</RepositoryUrl>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Submodules/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
