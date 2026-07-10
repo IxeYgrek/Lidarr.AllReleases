@@ -24,13 +24,25 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      - name: Extract Lidarr runtime references from Docker image
+            - name: Extract Lidarr runtime references from Docker image
         shell: bash
         run: |
           set -euo pipefail
-          LIDARR_IMAGE="hotio/lidarr:nightly"
+
+          LIDARR_IMAGE=""
+          for candidate in "ghcr.io/hotio/lidarr:nightly" "hotio/lidarr:nightly"; do
+            if docker pull "$candidate"; then
+              LIDARR_IMAGE="$candidate"
+              break
+            fi
+          done
+
+          if [ -z "$LIDARR_IMAGE" ]; then
+            echo "Unable to pull any supported Lidarr image reference"
+            exit 1
+          fi
+
           echo "Using image: $LIDARR_IMAGE"
-          docker pull "$LIDARR_IMAGE"
           CID="$(docker create "$LIDARR_IMAGE")"
           trap 'docker rm -f "$CID" >/dev/null 2>&1 || true' EXIT
 
@@ -40,6 +52,7 @@ jobs:
           docker cp "$CID":/app/bin/Lidarr.Http.dll ./References/Lidarr.Http.dll
 
           ls -lah References
+
 
       - name: Compute version from tag
         id: version
@@ -86,7 +99,8 @@ jobs:
           replacesArtifacts: true
           generateReleaseNotes: true
           body: |
-            Minimum Lidarr Version: nightly-compatible (built against hotio/lidarr:nightly runtime assemblies)
+                        Minimum Lidarr Version: nightly-compatible (built against ghcr.io/hotio/lidarr:nightly runtime assemblies)
+
 
 
 
