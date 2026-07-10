@@ -3,7 +3,7 @@ name: Build and Release Plugin
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
 
 permissions:
@@ -29,9 +29,9 @@ jobs:
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: "8.0.x"
 
-            - name: Compute version from tag
+      - name: Compute version from tag
         id: version
         shell: bash
         run: |
@@ -46,7 +46,6 @@ jobs:
         run: dotnet build ./Lidarr.AllReleases.csproj -c Release --no-restore -p:Version=${{ steps.version.outputs.version }} -p:RepositoryUrl=https://github.com/${{ github.repository }} -p:NuGetAudit=false
 
       - name: Pack plugin zip (net8.0)
-
         shell: bash
         run: |
           mkdir -p artifacts/package
@@ -68,5 +67,6 @@ jobs:
           generateReleaseNotes: true
           body: |
             Minimum Lidarr Version: 3.1.3.4970
+
 
 
