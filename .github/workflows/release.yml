@@ -47,9 +47,12 @@ jobs:
           trap 'docker rm -f "$CID" >/dev/null 2>&1 || true' EXIT
 
           mkdir -p References
-          docker cp "$CID":/app/bin/Lidarr.Common.dll ./References/Lidarr.Common.dll
+                    docker cp "$CID":/app/bin/Lidarr.Common.dll ./References/Lidarr.Common.dll
           docker cp "$CID":/app/bin/Lidarr.Core.dll ./References/Lidarr.Core.dll
           docker cp "$CID":/app/bin/Lidarr.Http.dll ./References/Lidarr.Http.dll
+          docker cp "$CID":/app/bin/NLog.dll ./References/NLog.dll
+          docker cp "$CID":/app/bin/FluentValidation.dll ./References/FluentValidation.dll
+
 
           ls -lah References
 

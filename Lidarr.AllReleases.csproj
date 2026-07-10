@@ -35,11 +35,21 @@
       <HintPath>$(LidarrReferencesPath)/Lidarr.Http.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="NLog">
+      <HintPath>$(LidarrReferencesPath)/NLog.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="FluentValidation">
+      <HintPath>$(LidarrReferencesPath)/FluentValidation.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
   <Target Name="EnsureLidarrReferences" BeforeTargets="ResolveReferences">
     <Error Condition="!Exists('$(LidarrReferencesPath)/Lidarr.Common.dll')" Text="Missing $(LidarrReferencesPath)/Lidarr.Common.dll. Populate References/ from a Lidarr runtime (/app/bin)." />
     <Error Condition="!Exists('$(LidarrReferencesPath)/Lidarr.Core.dll')" Text="Missing $(LidarrReferencesPath)/Lidarr.Core.dll. Populate References/ from a Lidarr runtime (/app/bin)." />
     <Error Condition="!Exists('$(LidarrReferencesPath)/Lidarr.Http.dll')" Text="Missing $(LidarrReferencesPath)/Lidarr.Http.dll. Populate References/ from a Lidarr runtime (/app/bin)." />
+    <Error Condition="!Exists('$(LidarrReferencesPath)/NLog.dll')" Text="Missing $(LidarrReferencesPath)/NLog.dll. Populate References/ from a Lidarr runtime (/app/bin)." />
+    <Error Condition="!Exists('$(LidarrReferencesPath)/FluentValidation.dll')" Text="Missing $(LidarrReferencesPath)/FluentValidation.dll. Populate References/ from a Lidarr runtime (/app/bin)." />
   </Target>
 </Project>
