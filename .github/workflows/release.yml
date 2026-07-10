@@ -31,7 +31,7 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Compute version from tag
+            - name: Compute version from tag
         id: version
         shell: bash
         run: |
@@ -39,15 +39,14 @@ jobs:
           VERSION="${TAG#v}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-            - name: Restore
+      - name: Restore
         run: dotnet restore ./Lidarr.AllReleases.csproj --configfile ./NuGet.config -p:NuGetAudit=false
 
-
-            - name: Build
+      - name: Build
         run: dotnet build ./Lidarr.AllReleases.csproj -c Release --no-restore -p:Version=${{ steps.version.outputs.version }} -p:RepositoryUrl=https://github.com/${{ github.repository }} -p:NuGetAudit=false
 
-
       - name: Pack plugin zip (net8.0)
+
         shell: bash
         run: |
           mkdir -p artifacts/package
