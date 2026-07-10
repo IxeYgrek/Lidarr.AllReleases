@@ -10,6 +10,7 @@
     <FileVersion>$(Version)</FileVersion>
     <InformationalVersion>$(Version)</InformationalVersion>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <GenerateResourceUsePreserializedResources>false</GenerateResourceUsePreserializedResources>
     <RepositoryUrl>https://github.com/OWNER/Lidarr.AllReleases</RepositoryUrl>
     <DefaultItemExcludes>$(DefaultItemExcludes);Submodules/**</DefaultItemExcludes>
   </PropertyGroup>
@@ -30,7 +31,4 @@
     </ProjectReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
-  </ItemGroup>
 </Project>

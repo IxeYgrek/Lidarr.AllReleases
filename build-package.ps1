@@ -22,6 +22,12 @@ dotnet build .\Lidarr.AllReleases.csproj -c Release --no-restore -p:Version=$Ver
 
 New-Item -ItemType Directory -Path .\artifacts\package -Force | Out-Null
 Copy-Item .\bin\Release\net8.0\Lidarr.Plugin.AllReleases.dll .\artifacts\package\ -Force
+if (Test-Path .\bin\Release\net8.0\Lidarr.Plugin.AllReleases.deps.json) {
+    Copy-Item .\bin\Release\net8.0\Lidarr.Plugin.AllReleases.deps.json .\artifacts\package\ -Force
+}
+if (Test-Path .\bin\Release\net8.0\Lidarr.Plugin.AllReleases.runtimeconfig.json) {
+    Copy-Item .\bin\Release\net8.0\Lidarr.Plugin.AllReleases.runtimeconfig.json .\artifacts\package\ -Force
+}
 if (Test-Path .\bin\Release\net8.0\Lidarr.Plugin.AllReleases.pdb) {
     Copy-Item .\bin\Release\net8.0\Lidarr.Plugin.AllReleases.pdb .\artifacts\package\ -Force
 }

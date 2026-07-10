@@ -20,6 +20,12 @@ dotnet build ./Lidarr.AllReleases.csproj -c Release --no-restore -p:Version="$VE
 
 mkdir -p artifacts/package
 cp -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.dll artifacts/package/
+if [ -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.deps.json ]; then
+  cp -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.deps.json artifacts/package/
+fi
+if [ -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.runtimeconfig.json ]; then
+  cp -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.runtimeconfig.json artifacts/package/
+fi
 if [ -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.pdb ]; then
   cp -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.pdb artifacts/package/
 fi

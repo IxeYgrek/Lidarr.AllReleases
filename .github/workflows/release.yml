@@ -45,16 +45,27 @@ jobs:
       - name: Build
         run: dotnet build ./Lidarr.AllReleases.csproj -c Release --no-restore -p:Version=${{ steps.version.outputs.version }} -p:RepositoryUrl=https://github.com/${{ github.repository }} -p:NuGetAudit=false -p:RunAnalyzers=false -p:TreatWarningsAsErrors=false -p:WarningsAsErrors=
 
-      - name: Pack plugin zip (net8.0)
+            - name: Pack plugin zip (net8.0)
         shell: bash
         run: |
           mkdir -p artifacts/package
           cp -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.dll artifacts/package/
+
+          if [ -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.deps.json ]; then
+            cp -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.deps.json artifacts/package/
+          fi
+
+          if [ -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.runtimeconfig.json ]; then
+            cp -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.runtimeconfig.json artifacts/package/
+          fi
+
           if [ -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.pdb ]; then
             cp -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.pdb artifacts/package/
           fi
+
           cd artifacts/package
           zip -r ../Lidarr.Plugin.AllReleases.net8.0.zip .
+
 
       - name: Create/Update GitHub Release
         uses: ncipollo/release-action@v1
