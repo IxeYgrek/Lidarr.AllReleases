@@ -1,59 +1,54 @@
 # Lidarr.AllReleases
 
-Plugin Lidarr qui ajoute une option globale **All types and statuses** pour ignorer le filtrage Metadata Profile (Primary Types / Secondary Types / Release Statuses).
+`Lidarr.AllReleases` is a Lidarr plugin that adds an override to keep **all release types and statuses** when metadata is refreshed.
 
-## Comportement
+By default, Lidarr filters releases using the configured Metadata Profile (primary types, secondary types, statuses). This plugin can bypass that filtering so you can keep every release returned by metadata providers.
 
-- Option activée (par défaut) : toutes les releases sont conservées.
-- Option désactivée : comportement natif Lidarr (filtrage Metadata Profile).
+## What it does
 
-## Où configurer
+- **Enabled (default):** keeps all releases, regardless of Metadata Profile filtering rules.
+- **Disabled:** uses the normal Lidarr behavior.
 
-Dans les paramètres Metadata du provider **All Releases Filter Override**.
+## Where to configure it
 
----
+In Lidarr:
 
-## Publication automatique (GitHub Release + zip net8.0)
+1. Go to **Settings → Metadata**.
+2. Add/enable the provider **All Releases Filter Override**.
+3. Use the option **All types and statuses**.
 
-Ce dépôt contient un workflow GitHub Actions (`.github/workflows/release.yml`) qui :
+## Installation
 
-1. clone Lidarr (`branch: plugins`) dans `Submodules/Lidarr`,
-2. restaure via `NuGet.config` (inclut les feeds Lidarr/Servarr),
-3. build en `Release`,
-4. génère `artifacts/Lidarr.Plugin.AllReleases.net8.0.zip`,
-5. publie la GitHub Release avec l'asset zip.
+### From Lidarr UI
 
-### Ce que tu as à faire
+1. Open **System → Plugins → Add Plugin**.
+2. Enter your GitHub plugin repository (`owner/repo` or full URL).
+3. Install the plugin.
+4. Restart Lidarr.
 
-1. Pousser ces fichiers sur ton repo GitHub.
-2. Créer un tag, ex: `v1.0.0`.
-3. Push le tag.
+After restart, enable it from **Settings → Metadata** (see section above).
 
-Exemple :
+## Automated releases (GitHub Actions)
+
+This repository includes a release workflow at:
+
+- `.github/workflows/release.yml`
+
+On a version tag (`v*`), it:
+
+1. Builds the plugin for `net8.0`.
+2. Creates `Lidarr.Plugin.AllReleases.net8.0.zip`.
+3. Publishes/updates a GitHub Release with the zip artifact.
+
+### Create a release
 
 ```bash
-# depuis ton repo
+# from repository root
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Le workflow fabriquera automatiquement la release installable par Lidarr.
-
----
-
-## Installation dans Lidarr
-
-Dans **System > Plugins > Add Plugin** :
-
-- colle l'URL GitHub du repo (ou `owner/repo`),
-- installe,
-- redémarre Lidarr.
-
-Lidarr téléchargera l'asset `*.net8.0.zip` depuis la release.
-
----
-
-## Build local (optionnel)
+## Local build (optional)
 
 ### PowerShell (Windows)
 
@@ -68,4 +63,6 @@ chmod +x ./build-package.sh
 ./build-package.sh 1.0.0
 ```
 
-Le zip sera produit dans `artifacts/Lidarr.Plugin.AllReleases.net8.0.zip`.
+Output package:
+
+- `artifacts/Lidarr.Plugin.AllReleases.net8.0.zip`
