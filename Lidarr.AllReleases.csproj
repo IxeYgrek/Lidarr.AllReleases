@@ -12,7 +12,7 @@
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateResourceUsePreserializedResources>false</GenerateResourceUsePreserializedResources>
     <RepositoryUrl>https://github.com/OWNER/Lidarr.AllReleases</RepositoryUrl>
-    <DefaultItemExcludes>$(DefaultItemExcludes);Submodules/**</DefaultItemExcludes>
+    <LidarrReferencesPath>$(MSBuildProjectDirectory)/References</LidarrReferencesPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,18 +23,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="Submodules/Lidarr/src/NzbDrone.Common/Lidarr.Common.csproj">
+    <Reference Include="Lidarr.Common">
+      <HintPath>$(LidarrReferencesPath)/Lidarr.Common.dll</HintPath>
       <Private>false</Private>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </ProjectReference>
-    <ProjectReference Include="Submodules/Lidarr/src/NzbDrone.Core/Lidarr.Core.csproj">
+    </Reference>
+    <Reference Include="Lidarr.Core">
+      <HintPath>$(LidarrReferencesPath)/Lidarr.Core.dll</HintPath>
       <Private>false</Private>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </ProjectReference>
-    <ProjectReference Include="Submodules/Lidarr/src/Lidarr.Http/Lidarr.Http.csproj">
+    </Reference>
+    <Reference Include="Lidarr.Http">
+      <HintPath>$(LidarrReferencesPath)/Lidarr.Http.dll</HintPath>
       <Private>false</Private>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </ProjectReference>
+    </Reference>
   </ItemGroup>
 
+  <Target Name="EnsureLidarrReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(LidarrReferencesPath)/Lidarr.Common.dll')" Text="Missing $(LidarrReferencesPath)/Lidarr.Common.dll. Populate References/ from a Lidarr runtime (/app/bin)." />
+    <Error Condition="!Exists('$(LidarrReferencesPath)/Lidarr.Core.dll')" Text="Missing $(LidarrReferencesPath)/Lidarr.Core.dll. Populate References/ from a Lidarr runtime (/app/bin)." />
+    <Error Condition="!Exists('$(LidarrReferencesPath)/Lidarr.Http.dll')" Text="Missing $(LidarrReferencesPath)/Lidarr.Http.dll. Populate References/ from a Lidarr runtime (/app/bin)." />
+  </Target>
 </Project>

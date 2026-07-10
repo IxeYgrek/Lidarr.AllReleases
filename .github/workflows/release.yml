@@ -19,17 +19,27 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Checkout Lidarr source (v3.1.3.4968)
-        uses: actions/checkout@v5
-        with:
-          repository: Lidarr/Lidarr
-          ref: v3.1.3.4968
-          path: Submodules/Lidarr
-
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "8.0.x"
+
+      - name: Extract Lidarr runtime references from Docker image
+        shell: bash
+        run: |
+          set -euo pipefail
+          LIDARR_IMAGE="hotio/lidarr:nightly"
+          echo "Using image: $LIDARR_IMAGE"
+          docker pull "$LIDARR_IMAGE"
+          CID="$(docker create "$LIDARR_IMAGE")"
+          trap 'docker rm -f "$CID" >/dev/null 2>&1 || true' EXIT
+
+          mkdir -p References
+          docker cp "$CID":/app/bin/Lidarr.Common.dll ./References/Lidarr.Common.dll
+          docker cp "$CID":/app/bin/Lidarr.Core.dll ./References/Lidarr.Core.dll
+          docker cp "$CID":/app/bin/Lidarr.Http.dll ./References/Lidarr.Http.dll
+
+          ls -lah References
 
       - name: Compute version from tag
         id: version
@@ -75,6 +85,8 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           generateReleaseNotes: true
-          body: |
-            Minimum Lidarr Version: 3.1.3.4968
+                    body: |
+            Minimum Lidarr Version: nightly-compatible (built against hotio/lidarr:nightly runtime assemblies)
+
+
 
