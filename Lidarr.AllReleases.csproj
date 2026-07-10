@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-
     <ProjectReference Include="Submodules/Lidarr/src/NzbDrone.Common/Lidarr.Common.csproj" />
     <ProjectReference Include="Submodules/Lidarr/src/NzbDrone.Core/Lidarr.Core.csproj" />
     <ProjectReference Include="Submodules/Lidarr/src/Lidarr.Http/Lidarr.Http.csproj">
@@ -30,4 +29,3 @@
     </ProjectReference>
   </ItemGroup>
 </Project>
-
