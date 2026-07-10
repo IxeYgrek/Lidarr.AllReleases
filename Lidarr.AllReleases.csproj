@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Lidarr.Plugin.AllReleases</AssemblyName>
+    <RootNamespace>Lidarr.Plugin.AllReleases</RootNamespace>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <RepositoryUrl>https://github.com/OWNER/Lidarr.AllReleases</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>RepositoryUrl</_Parameter1>
+      <_Parameter2>$(RepositoryUrl)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <ProjectReference Include="Submodules/Lidarr/src/NzbDrone.Common/Lidarr.Common.csproj" />
+    <ProjectReference Include="Submodules/Lidarr/src/NzbDrone.Core/Lidarr.Core.csproj" />
+    <ProjectReference Include="Submodules/Lidarr/src/Lidarr.Http/Lidarr.Http.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
+
