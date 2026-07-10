@@ -22,7 +22,7 @@ In Lidarr:
 ### From Lidarr UI
 
 1. Open **System → Plugins → Add Plugin**.
-2. Enter your GitHub plugin repository (`owner/repo` or full URL).
+2. Enter GitHub plugin repository (https://github.com/IxeYgrek/Lidarr.AllReleases).
 3. Install the plugin.
 4. Restart Lidarr.
 
