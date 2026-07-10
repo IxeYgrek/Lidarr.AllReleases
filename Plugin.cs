@@ -1,9 +1,9 @@
 using System.Reflection;
-using NzbDrone.Core.Plugins;
+using CorePlugin = NzbDrone.Core.Plugins.Plugin;
 
 namespace Lidarr.Plugin.AllReleases;
 
-public class AllReleasesPlugin : Plugin
+public class AllReleasesPlugin : CorePlugin
 {
     private static readonly string RepoUrl = ResolveRepositoryUrl();
 
