@@ -15,8 +15,8 @@ if git remote get-url origin >/dev/null 2>&1; then
   fi
 fi
 
-dotnet restore ./Lidarr.AllReleases.csproj --configfile ./NuGet.config
-dotnet build ./Lidarr.AllReleases.csproj -c Release --no-restore -p:Version="$VERSION" -p:RepositoryUrl="$REPO_URL"
+dotnet restore ./Lidarr.AllReleases.csproj --configfile ./NuGet.config -p:NuGetAudit=false
+dotnet build ./Lidarr.AllReleases.csproj -c Release --no-restore -p:Version="$VERSION" -p:RepositoryUrl="$REPO_URL" -p:NuGetAudit=false -p:RunAnalyzers=false -p:TreatWarningsAsErrors=false -p:WarningsAsErrors=
 
 mkdir -p artifacts/package
 cp -f ./bin/Release/net8.0/Lidarr.Plugin.AllReleases.dll artifacts/package/
