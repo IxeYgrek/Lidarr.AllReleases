@@ -1,3 +1,4 @@
+using System.Net;
 using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
@@ -60,7 +61,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
 
         if (httpResponse.Resource.Limited)
         {
-            return null;
+            return new HashSet<string>();
         }
 
         return new HashSet<string>(httpResponse.Resource.Items);
@@ -108,7 +109,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
         artist.SortName = NzbDrone.Core.Parser.Parser.NormalizeTitle(artist.Metadata.Value.Name);
 
         artist.Albums = FilterAlbums(httpResponse.Resource.Albums, metadataProfileId)
-            .Select(x => MapAlbum(x, null))
+            .Select(x => MapAlbum(x, new Dictionary<string, ArtistMetadata>()))
             .ToList();
 
         return artist;
@@ -116,7 +117,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
 
     public HashSet<string> GetChangedAlbums(DateTime startTime)
     {
-        return _cache.Get("ChangedAlbums", () => GetChangedAlbumsUncached(startTime), TimeSpan.FromMinutes(30));
+        return _cache.Get("ChangedAlbums", () => GetChangedAlbumsUncached(startTime), TimeSpan.FromMinutes(30)) ?? new HashSet<string>();
     }
 
     private HashSet<string> GetChangedAlbumsUncached(DateTime startTime)
@@ -133,7 +134,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
 
         if (httpResponse.Resource.Limited)
         {
-            return null;
+            return new HashSet<string>();
         }
 
         return new HashSet<string>(httpResponse.Resource.Items);
@@ -377,7 +378,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
                 _logger.Debug("Artist search failed for '{0}', trying album search", lowerTitle);
             }
 
-            var album = SearchForNewAlbum(lowerTitle, null);
+            var album = SearchForNewAlbum(lowerTitle, string.Empty);
             if (album.Any())
             {
                 return new List<object> { album.First() };
@@ -467,7 +468,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
         }
     }
 
-    private static Album MapAlbum(AlbumResource resource, Dictionary<string, ArtistMetadata> artistDict)
+    private static Album MapAlbum(AlbumResource resource, Dictionary<string, ArtistMetadata>? artistDict)
     {
         var album = new Album
         {
@@ -512,7 +513,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
         return album;
     }
 
-    private static AlbumRelease MapRelease(ReleaseResource resource, Dictionary<string, ArtistMetadata> artistDict)
+    private static AlbumRelease MapRelease(ReleaseResource resource, Dictionary<string, ArtistMetadata>? artistDict)
     {
         var release = new AlbumRelease
         {
@@ -569,11 +570,19 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
         };
     }
 
-    private static Track MapTrack(TrackResource resource, Dictionary<string, ArtistMetadata> artistDict)
+    private static Track MapTrack(TrackResource resource, Dictionary<string, ArtistMetadata>? artistDict)
     {
+        var artistMetadata = artistDict != null && artistDict.TryGetValue(resource.ArtistId, out var mappedArtist)
+            ? mappedArtist
+            : new ArtistMetadata
+            {
+                Name = "Unknown Artist",
+                ForeignArtistId = resource.ArtistId
+            };
+
         return new Track
         {
-            ArtistMetadata = artistDict[resource.ArtistId],
+            ArtistMetadata = artistMetadata,
             Title = resource.TrackName,
             ForeignTrackId = resource.Id,
             OldForeignTrackIds = resource.OldIds,
@@ -586,7 +595,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
         };
     }
 
-    private static List<Track> CreatePlaceholderTracks(ReleaseResource resource, Dictionary<string, ArtistMetadata> artistDict, int mediumNumber, int trackCount)
+    private static List<Track> CreatePlaceholderTracks(ReleaseResource resource, Dictionary<string, ArtistMetadata>? artistDict, int mediumNumber, int trackCount)
     {
         var fallbackArtist = artistDict?.Values.FirstOrDefault() ?? new ArtistMetadata
         {
