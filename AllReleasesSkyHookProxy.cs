@@ -1,4 +1,3 @@
-using System.Net;
 using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Common.Extensions;
@@ -532,14 +531,28 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
 
         if (!allMedia.Any())
         {
-            foreach (var n in allTracks.Select(x => x.MediumNumber).Distinct())
+            if (allTracks.Any())
             {
-                allMedia.Add(new Medium { Name = "Unknown", Number = n, Format = "Unknown" });
+                foreach (var n in allTracks.Select(x => x.MediumNumber).Distinct())
+                {
+                    allMedia.Add(new Medium { Name = "Unknown", Number = n, Format = "Unknown" });
+                }
+            }
+            else
+            {
+                allMedia.Add(new Medium { Name = "Unknown", Number = 1, Format = "Unknown" });
             }
         }
 
+        var fallbackTrackCount = resource.TrackCount;
+
+        if (!allTracks.Any() && fallbackTrackCount > 0)
+        {
+            allTracks = CreatePlaceholderTracks(resource, artistDict, allMedia.First().Number, fallbackTrackCount);
+        }
+
         release.Tracks = allTracks;
-        release.TrackCount = release.Tracks.Value.Count;
+        release.TrackCount = release.Tracks.Value.Count > 0 ? release.Tracks.Value.Count : fallbackTrackCount;
         release.Media = allMedia;
         release.Duration = release.Tracks.Value.Sum(x => x.Duration);
 
@@ -571,6 +584,31 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
             Duration = resource.DurationMs,
             MediumNumber = resource.MediumNumber
         };
+    }
+
+    private static List<Track> CreatePlaceholderTracks(ReleaseResource resource, Dictionary<string, ArtistMetadata> artistDict, int mediumNumber, int trackCount)
+    {
+        var fallbackArtist = artistDict?.Values.FirstOrDefault() ?? new ArtistMetadata
+        {
+            Name = "Unknown Artist",
+            ForeignArtistId = "unknown-artist"
+        };
+
+        return Enumerable.Range(1, trackCount)
+            .Select(i => new Track
+            {
+                ArtistMetadata = fallbackArtist,
+                Title = $"Unknown Track {i}",
+                ForeignTrackId = $"{resource.Id}-placeholder-track-{i}",
+                OldForeignTrackIds = new List<string>(),
+                ForeignRecordingId = $"{resource.Id}-placeholder-recording-{i}",
+                OldForeignRecordingIds = new List<string>(),
+                TrackNumber = i.ToString(),
+                AbsoluteTrackNumber = i,
+                Duration = 0,
+                MediumNumber = mediumNumber
+            })
+            .ToList();
     }
 
     private static ArtistMetadata MapArtistMetadata(ArtistResource resource)
