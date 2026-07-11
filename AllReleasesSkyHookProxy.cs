@@ -26,8 +26,6 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
     private readonly IMetadataFactory _metadataFactory;
     private readonly ICached<HashSet<string>> _cache;
 
-    private static readonly List<string> NonAudioMedia = new() { "DVD", "DVD-Video", "Blu-ray", "HD-DVD", "VCD", "SVCD", "UMD", "VHS" };
-    private static readonly List<string> SkippedTracks = new() { "[data track]" };
 
     public AllReleasesSkyHookProxy(
         IHttpClient httpClient,
@@ -144,37 +142,8 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
 
     public IEnumerable<AlbumResource> FilterAlbums(IEnumerable<AlbumResource> albums, int metadataProfileId)
     {
-        if (IsAllTypesAndStatusesEnabled())
-        {
-            return albums;
-        }
-
-        var metadataProfile = _metadataProfileService.Exists(metadataProfileId)
-            ? _metadataProfileService.Get(metadataProfileId)
-            : _metadataProfileService.All().First();
-
-        var primaryTypes = new HashSet<string>(metadataProfile.PrimaryAlbumTypes.Where(s => s.Allowed).Select(s => s.PrimaryAlbumType.Name));
-        var secondaryTypes = new HashSet<string>(metadataProfile.SecondaryAlbumTypes.Where(s => s.Allowed).Select(s => s.SecondaryAlbumType.Name));
-        var releaseStatuses = new HashSet<string>(metadataProfile.ReleaseStatuses.Where(s => s.Allowed).Select(s => s.ReleaseStatus.Name));
-
-        return albums.Where(album =>
-            primaryTypes.Contains(album.Type) &&
-            ((!album.SecondaryTypes.Any() && secondaryTypes.Contains("Studio")) || album.SecondaryTypes.Any(x => secondaryTypes.Contains(x))) &&
-            album.ReleaseStatuses.Any(x => releaseStatuses.Contains(x)));
-    }
-
-    private bool IsAllTypesAndStatusesEnabled()
-    {
-        var definition = _metadataFactory
-            .All()
-            .FirstOrDefault(x => x.Implementation == nameof(AllReleasesMetadata));
-
-        if (definition?.Settings is AllReleasesMetadataSettings settings)
-        {
-            return settings.AllTypesAndStatuses;
-        }
-
-        return true;
+        _logger.Debug("[AllReleases] Album metadata profile filtering disabled, returning all albums");
+        return albums;
     }
 
     public Tuple<string, Album, List<ArtistMetadata>> GetAlbumInfo(string foreignAlbumId)
@@ -412,15 +381,7 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
             var album = SearchForNewAlbum(lowerTitle, null);
             if (album.Any())
             {
-                var result = album.Where(x => x.AlbumReleases.Value.Any()).FirstOrDefault();
-                if (result != null)
-                {
-                    return new List<object> { result };
-                }
-                else
-                {
-                    return new List<object>();
-                }
+                return new List<object> { album.First() };
             }
 
             return new List<object>();
@@ -492,11 +453,6 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
         album.Artist = artist;
         album.ArtistMetadata = artist.Metadata.Value;
 
-        if (!album.AlbumReleases.Value.Any())
-        {
-            return null;
-        }
-
         return album;
     }
 
@@ -539,7 +495,6 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
         {
             album.AlbumReleases = resource.Releases
                 .Select(x => MapRelease(x, artistDict))
-                .Where(x => x.TrackCount > 0)
                 .ToList();
 
             var mostTracks = album.AlbumReleases.Value.MaxBy(x => x.TrackCount);
@@ -573,7 +528,8 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
         };
 
         var allMedia = resource.Media.Select(MapMedium).ToList();
-        var allTracks = resource.Tracks.Select(x => MapTrack(x, artistDict));
+        var allTracks = resource.Tracks.Select(x => MapTrack(x, artistDict)).ToList();
+
         if (!allMedia.Any())
         {
             foreach (var n in allTracks.Select(x => x.MediumNumber).Distinct())
@@ -582,14 +538,9 @@ public class AllReleasesSkyHookProxy : IProvideArtistInfo, ISearchForNewArtist, 
             }
         }
 
-        var audioMediaNumbers = allMedia.Where(x => !NonAudioMedia.Contains(x.Format)).Select(x => x.Number);
-
-        release.Tracks = allTracks.Where(x => audioMediaNumbers.Contains(x.MediumNumber) && !SkippedTracks.Contains(x.Title)).ToList();
+        release.Tracks = allTracks;
         release.TrackCount = release.Tracks.Value.Count;
-
-        var usedMediaNumbers = release.Tracks.Value.Select(track => track.MediumNumber);
-        release.Media = allMedia.Where(medium => usedMediaNumbers.Contains(medium.Number)).ToList();
-
+        release.Media = allMedia;
         release.Duration = release.Tracks.Value.Sum(x => x.Duration);
 
         return release;
