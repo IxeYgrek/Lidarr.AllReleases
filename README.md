@@ -1,21 +1,38 @@
+> [!WARNING]
+> This plugin was fully coded by AI, but tested by a human. At 12/07/2026, it works.
+
 # Lidarr.AllReleases
 
 `Lidarr.AllReleases` is a Lidarr plugin that adds an override to keep **all release types and statuses** when metadata is refreshed.
 
 By default, Lidarr filters releases using the configured Metadata Profile (primary types, secondary types, statuses). This plugin can bypass that filtering so you can keep every release returned by metadata providers.
 
+## Prerequisite
+
+The tests were performed with a MusicBrainz database and a locally hosted "LidarrAPI.Metadata" cache. Full documentation is available on this page: https://github.com/blampe/hearring-aid/blob/main/docs/self-hosted-mirror-setup.md
+
+All applications used are Docker containers:
+- **Lidarr** with the Tubifarry plugin (https://github.com/TypNull/Tubifarry)
+- **Musicbrainz**
+- **Lidarrapi.metadata**
+
 ## What it does
 
-- **Enabled (default):** keeps all releases, regardless of Metadata Profile filtering rules.
-- **Disabled:** uses the normal Lidarr behavior.
+- **If plugin is enabled (default):** keeps all releases, regardless of Metadata Profile filtering rules.
+- **If plugin is disabled:** uses the normal Lidarr behavior.
+- These releases are also visible from applications using the Lidarr database (e.g. MusicSeerr)
 
-## Where to configure it
+For example, with a classic installation of Lidarr without this plugin, you are not able to find the release having the ID [eb7ead5b-6b29-41e9-a42f-8dc7e26a0049](https://musicbrainz.org/release/eb7ead5b-6b29-41e9-a42f-8dc7e26a0049) because it is a DVD format. With the plugin you can find it, add it to the library and link it to your files. It is also included in the artist's release list. 
 
-In Lidarr:
+![ps://xymaster.fr/upload/github/allrelease.jpg](https://xymaster.fr/upload/github/allrelease.jpg)
 
-1. Go to **Settings → Metadata**.
-2. Add/enable the provider **All Releases Filter Override**.
-3. Use the option **All types and statuses**.
+![ps://xymaster.fr/upload/github/allrelease2.jpg](https://xymaster.fr/upload/github/allrelease2.jpg)
+
+![ps://xymaster.fr/upload/github/musicseerr.jpg](https://xymaster.fr/upload/github/musicseerr.jpg)
+
+## What he doesn't
+
+- **It does not display the titles of certain releases** whose type was not originally supported by Lidarr (e.g. a DVD). But it is still possible to add it to your library, link it to your files and have it detected by other applications that use Lidarr's database (e.g. MusicSeer)
 
 ## Installation
 
@@ -26,7 +43,15 @@ In Lidarr:
 3. Install the plugin.
 4. Restart Lidarr.
 
-After restart, enable it from **Settings → Metadata** (see section above).
+After restart, enable it from **Settings → Metadata** (see section below).
+
+### Where to configure it
+
+In Lidarr:
+
+1. Go to **Settings → Metadata**.
+2. Click on **All Releases Filter Override**.
+3. Check the two options **All types and statuses** and **Enable**.
 
 ## Automated releases (GitHub Actions)
 
