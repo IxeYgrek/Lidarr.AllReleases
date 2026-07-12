@@ -12,7 +12,7 @@ By default, Lidarr filters releases using the configured Metadata Profile (prima
 The tests were performed with a MusicBrainz database and a locally hosted "LidarrAPI.Metadata" cache. Full documentation is available on this page: https://github.com/blampe/hearring-aid/blob/main/docs/self-hosted-mirror-setup.md
 
 All applications used are Docker containers:
-- **Lidarr** with the Tubifarry plugin (https://github.com/TypNull/Tubifarry)
+- **Lidarr** (Docker image : ghcr.io/hotio/lidarr:nightly) with the Tubifarry plugin (https://github.com/TypNull/Tubifarry)
 - **Musicbrainz**
 - **Lidarrapi.metadata**
 
