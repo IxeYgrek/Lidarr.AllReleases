@@ -1,5 +1,5 @@
 > [!WARNING]
-> This plugin was fully coded by AI, but tested by a human. On **July 12, 2026**, it works.
+> This plugin was fully coded by AI, but tested by a human. On **July 12, 2026**, it works, but apparently only with a local Lidarr metadata server.
 
 # Lidarr.AllReleases
 
