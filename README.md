@@ -16,6 +16,10 @@ All applications used are Docker containers:
 - **Musicbrainz**
 - **Lidarrapi.metadata**
 
+> [!NOTE]
+> I think the plugin also works with the default Lidarr cache server. I did not test without, but based on the queries I made to the local MusicBrainz cache and database, filtering does not apply to the Lidarr cache but only to the Web interface.
+> However, since the official Lidarr cache server has been in reconstruction on their Github page since April 2025, I advise the use of a local cache server and a local MusicBrainz database.
+
 ## What it does
 
 - **If plugin is enabled (default):** keeps all releases, regardless of Metadata Profile filtering rules.
