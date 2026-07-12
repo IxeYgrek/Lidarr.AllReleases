@@ -13,8 +13,8 @@ The tests were performed with a MusicBrainz database and a locally hosted "Lidar
 
 All applications used are Docker containers:
 - **Lidarr** (Docker image : ghcr.io/hotio/lidarr:nightly) with the Tubifarry plugin (https://github.com/TypNull/Tubifarry)
-- **Musicbrainz**
-- **Lidarrapi.metadata**
+- **Musicbrainz** (Docker release : https://github.com/metabrainz/musicbrainz-docker/releases/tag/v-2026-05-13.0-mbdb31-pg18)
+- **Lidarrapi.metadata** (Docker image : blampe/lidarr.metadata:70a9707)
 
 > [!NOTE]
 > I think the plugin also works with the default Lidarr cache server. I did not test without, but based on the queries I made to the local MusicBrainz cache and database, filtering does not apply to the Lidarr cache but only to the Web interface.
